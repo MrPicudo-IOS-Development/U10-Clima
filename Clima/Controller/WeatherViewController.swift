@@ -2,23 +2,24 @@
 
 import UIKit
 
-// Agregamos como súper clase secundaria, la clase UITextFieldDelegate para poder controlar el teclado.
+// Agregamos como súper clase secundaria, la clase UITextFieldDelegate para poder controlar el TextField.
 class WeatherViewController: UIViewController, UITextFieldDelegate {
 
     // IBOutlets de la interfaz para el text field, el símbolo SF del clima, el número de la temperatura y la ciudad
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
+    // Creamos un objeto de la clase UITextField
     @IBOutlet weak var searchTextField: UITextField!
     
     // Variables globales
     var city: String? = nil
     
-    
+    // Tenemos que "iniciar sesión" de este ViewController, en la clase UITextField para que pueda acceder a todos los métodos delegados.
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Definimos a nuestra clase ViewController como el encargado de manejar el Text Field
-        searchTextField.delegate = self
+        // Definimos a nuestra clase ViewController como el "encargado" de comunicarse con el protocolo UITextFieldDelegate para manejar el UITextField.
+        searchTextField.delegate = self // El delegado de la clase UITextField es la representación de todas las clases que pueden implementar el protocolo UITextFieldDelegate, aquí estamos diciendo que ese delegado es este ViewController que es de tipo UITextFieldDelegate.
     }
 
     // Función que controla el bot{on de búsqueda de la aplicación.
