@@ -5,6 +5,11 @@ import UIKit
 // Agregamos como súper clase secundaria, la clase UITextFieldDelegate para poder controlar el TextField.
 class WeatherViewController: UIViewController, UITextFieldDelegate {
 
+    /* Llave para usar la API de OpenWeather: 2efea90cc5e2995e5cd1d2ab8bd09bbc */
+    
+    // Creamos el objeto de la estructura weatherManager
+    var weatherManager = WeatherManager()
+    
     // IBOutlets de la interfaz para el text field, el símbolo SF del clima, el número de la temperatura y la ciudad
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -22,7 +27,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         searchTextField.delegate = self // El delegado de la clase UITextField es la representación de todas las clases que pueden implementar el protocolo UITextFieldDelegate, aquí estamos diciendo que ese delegado es este ViewController que es de tipo UITextFieldDelegate.
     }
 
-    // Función que controla el bot{on de búsqueda de la aplicación.
+    // Función que controla el botón de búsqueda de la aplicación.
     @IBAction func searchButton(_ sender: UIButton) {
         print(searchTextField.text!)
         // Indicamos que terminamos de escribir en el TextField
@@ -39,8 +44,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     
     // Función que se activa cuando se llama al método .endEditing(true)
     func textFieldDidEndEditing(_ textField: UITextField) {
-        // Capturamos en una variable global, el nombre de la ciudad que escribió el usuario
-        city = searchTextField.text
+        // Mandamos a la variable global como parámetro del método fetchWeather, usando Optional Binding.
+        if let city = searchTextField.text {
+            weatherManager.fetchWeather(city)
+        }
         // Borramos el texto que haya dentro del TextField
         searchTextField.text = ""
     }
