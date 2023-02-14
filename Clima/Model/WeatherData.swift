@@ -4,9 +4,33 @@ import Foundation
 
 // Estructura que implementa el protocolo de saber decodificarse a si misma a partir de una representación externa como JSON
 struct WeatherData: Decodable {
-    let name: String
-    let main: Main
+    let coord: Coord
     let weather: [Weather]
+    let base: String
+    let main: Main
+    let visibility: Int
+    let wind: Wind
+    let clouds: Clouds
+    let dt: Int
+    let sys: Sys
+    let timezone: Int
+    let id: Int
+    let name: String
+    let cod: Int
+}
+
+// Estructura para crear objetos de tipo Coord en la estructura principal
+struct Coord: Decodable {
+    let lon: Double
+    let lat: Double
+}
+
+// Estructura con la cual haremos un arreglo de objetos tipo Weather en la estructura principal.
+struct Weather: Decodable {
+    let id: Int
+    let main: String
+    let description: String
+    let icon: String
 }
 
 // Estructura para el atributo main de la estructura principal
@@ -17,12 +41,27 @@ struct Main: Decodable {
     let temp_max: Double
     let pressure: Int
     let humidity: Int
+    let sea_level: Int?
+    let grnd_level: Int?
 }
 
-// Creamos la estructura de la cual haremos un arreglo en la estructura principal
-struct Weather: Decodable {
-    let id: Int
-    let main: String
-    let description: String
-    let icon: String
+// Estructura para crear objetos de tipo Wind en la estructura principal
+struct Wind: Decodable {
+    let speed: Double
+    let deg: Int
+    let gust: Double?
+}
+
+// Estructua para crear objetos de tipo Clouds en la estructura principal
+struct Clouds: Decodable {
+    let all: Int
+}
+
+// Estructura para crear objetos de tipo Sys en la estructura principal
+struct Sys: Decodable {
+    let type: Int?
+    let id: Int?
+    let country: String
+    let sunrise: Int
+    let sunset: Int
 }

@@ -18,9 +18,10 @@ struct WeatherManager {
     // Los comentarios iniciales de la función performRequest están en el código de referencia
     func performRequest(_ urlString: String) {
         if let url = URL(string: urlString) {
+            // Los objetos de la clase URLSession sirven para hacer Networking entre la aplicación y una API
             let session = URLSession(configuration: .default)
             // Usamos un trailing closure para llamar a la función que se encuentra en el parámetro del handler de .dataTask
-            let task = session.dataTask(with: url) {data, response, error in
+            let task = session.dataTask(with: url) {data, response, error in // La tarea de un objeto URLSession sirve para "ingresar la dirección web".
                 if error != nil {
                     print(error!)
                     return
@@ -30,7 +31,7 @@ struct WeatherManager {
                     parseJSON(weatherData: safeData) // Equivalente a self.parseJSON(weatherData: safeData), dentro de un closure***
                 }
             }
-            task.resume()
+            task.resume() // Todas las tareas se inician es modo suspendido, para activarlas debemos usar este método.
         }
     }
     
@@ -42,10 +43,15 @@ struct WeatherManager {
         do { // Estructura Do-Catch para trabajar con posibles errores.
             // Creamos un objeto de tipo weatherData usando el decodificador.
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
-            // Imprimimos algunos valores ya decodificados en nuestro objeto de tipo WeatherData.
+            
+            // Imprimimos algunos valores ya decodificados en nuestro objeto de tipo WeatherData (solamente para visualizar lo que estamos haciendo)
             print(decodedData.name)
             print(decodedData.main.temp)
             print(decodedData.weather[0].description)
+            
+            let weatherId = decodedData.weather[0].id
+            print(getConditionName(weatherId))
+            
         } catch {
             print(error)
         }
@@ -53,6 +59,25 @@ struct WeatherManager {
      
 }
 
+func getConditionName(_ weatherId: Int) -> String {
+    let conditionName: String
+    switch(weatherId) {
+        case 800:       conditionName = "sun.max.fill"              // Ícono 01d
+        case 801:       conditionName = "cloud.sun"                 // Ícono 02d
+        case 802:       conditionName = "cloud.sun.fill"            // Ícono 03d
+        case 803...804: conditionName = "cloud.sun.circle.fill"     // Ícono 04d
+        case 300...321: conditionName = "cloud.drizzle"             // Ícono 09d
+        case 520...531: conditionName = "cloud.drizzle"             // Ícono 09d
+        case 500...504: conditionName = "cloud.rain.fill"           // Ícono 10d
+        case 200...232: conditionName = "cloud.heavy.rain.circle"   // Ícono 11d
+        case 511:       conditionName = "snowflake"                 // Ícono 13d
+        case 600...622: conditionName = "snowflake"                 // Ícono 13d
+        case 700...781: conditionName = "tornado"                   // Ícono 50d
+        default: conditionName = "sun.max.fill"
+    }
+    
+    return conditionName
+}
 
 
 /* Código de referencia para entender cómo se implementó el closure en el paso 3
