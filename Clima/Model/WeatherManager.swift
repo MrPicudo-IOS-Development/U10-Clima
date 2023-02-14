@@ -43,14 +43,12 @@ struct WeatherManager {
         do { // Estructura Do-Catch para trabajar con posibles errores.
             // Creamos un objeto de tipo weatherData usando el decodificador.
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
-            
-            // Imprimimos algunos valores ya decodificados en nuestro objeto de tipo WeatherData (solamente para visualizar lo que estamos haciendo)
-            print(decodedData.name)
-            print(decodedData.main.temp)
-            print(decodedData.weather[0].description)
-            
-            let weatherId = decodedData.weather[0].id
-            print(getConditionName(weatherId))
+            // Creamos las constantes que pasaremos como parámetros para construir el objeto del WeatherModel
+            let id = decodedData.weather[0].id
+            let temp = decodedData.main.temp
+            let name = decodedData.name
+            // Construimos el objeto de la estructura WeatherModel
+            let weatherObject = WeatherModel(conditionId: id, cityName: name, temperature: temp)
             
         } catch {
             print(error)
@@ -59,25 +57,7 @@ struct WeatherManager {
      
 }
 
-func getConditionName(_ weatherId: Int) -> String {
-    let conditionName: String
-    switch(weatherId) {
-        case 800:       conditionName = "sun.max.fill"              // Ícono 01d
-        case 801:       conditionName = "cloud.sun"                 // Ícono 02d
-        case 802:       conditionName = "cloud.sun.fill"            // Ícono 03d
-        case 803...804: conditionName = "cloud.sun.circle.fill"     // Ícono 04d
-        case 300...321: conditionName = "cloud.drizzle"             // Ícono 09d
-        case 520...531: conditionName = "cloud.drizzle"             // Ícono 09d
-        case 500...504: conditionName = "cloud.rain.fill"           // Ícono 10d
-        case 200...232: conditionName = "cloud.heavy.rain.circle"   // Ícono 11d
-        case 511:       conditionName = "snowflake"                 // Ícono 13d
-        case 600...622: conditionName = "snowflake"                 // Ícono 13d
-        case 700...781: conditionName = "tornado"                   // Ícono 50d
-        default: conditionName = "sun.max.fill"
-    }
-    
-    return conditionName
-}
+
 
 
 /* Código de referencia para entender cómo se implementó el closure en el paso 3
