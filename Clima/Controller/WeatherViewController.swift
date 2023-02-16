@@ -3,6 +3,7 @@
 import UIKit
 
 // Agregamos como súper clase secundaria, la clase UITextFieldDelegate para poder controlar el TextField.
+/// Controla la vista principal, implementa protocolos de UITextFieldDelegate y WeatherManagerDelegate
 class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
     
     /* Llave para usar la API de OpenWeather: 2efea90cc5e2995e5cd1d2ab8bd09bbc */
@@ -14,6 +15,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
+    
     // Creamos un objeto de la clase UITextField
     @IBOutlet weak var searchTextField: UITextField!
     
@@ -72,9 +74,14 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     }
     
     // Función para implementar el delegate design pattern en nuestra aplicación
-    func receiveWeatherModel(weatherO: WeatherModel) {
+    func receiveWeatherModel(_ weatherManager: WeatherManager, _ weatherO: WeatherModel) {
         print("Hola!! ", weatherO.conditionName)
         // conditionImageView.image = UIImage(systemName: weatherO.conditionName)
+    }
+    
+    // Función para imprimir el posible error en la consola al momento de probar la aplicación
+    func didFailWithError(_ error: Error) {
+        print(error)
     }
     
 }

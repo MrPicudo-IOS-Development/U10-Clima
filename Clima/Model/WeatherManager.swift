@@ -5,7 +5,9 @@ import Foundation
 /* Protocolo para el WeatherManager. Este protocolo puede escribirse en cualquiera de los archivos .swift de la aplicación, siempre que esté fuera de cualquier clase o estructura. Pero por convención siempre se debe crear en el archivo de la clase o estructura que lleva su mismo nombre inicial. */
 protocol WeatherManagerDelegate {
     // Prototipo de la función que requiere cualquier clase o estructura que implemente este protocolo.
-    func receiveWeatherModel(weatherO: WeatherModel)
+    func receiveWeatherModel(_ weatherManager: WeatherManager, _ weatherO: WeatherModel)
+    // Función para enviar los errores al WeatherViewController en caso de que aparezcan
+    func didFailWithError(_ error: Error)
 }
 
 /// Se encarga de abrir la caja organizadora que representa la estructura WeatherData, llenarla con datos obtenidos en formato JSON con una llamada a la API de OpenWeather que realizó al inicio, y después construir con las piezas importantes de esa caja, un modelo útil para la aplicación que se representa como un objeto de la estructura WeatherModel. Este objeto lo manda a la clase WeatherViewController para que podamos utilizarlo en la interfaz de la aplicación.
@@ -21,26 +23,27 @@ struct WeatherManager {
         // Unimos la URL básica de la llamada a la API de OpenWeather con el nombre de la ciudad que obtenemos del textField.
         let urlString = "\(weatherURL)&q=\(cityName)"
         // Ahora, nuestra variable llamada urlString contiene toda la información necesaria para hacer una llamada a la API.
-        performRequest(urlString) // Equivalente a self.performRequest(urlString)
+        performRequest(with: urlString) // Equivalente a self.performRequest(urlString) - - - with es el parámetro externo.
     }
     
     
-    // Los comentarios iniciales de la función performRequest están en el código de referencia
-    func performRequest(_ urlString: String) {
+    // Usamos parámetros internos y externos para hacer más claro el código de esta función.
+    func performRequest(with urlString: String) {
         // Se crea un objeto que almacena la ubicación de un recurso (local o externo), en forma de un safeOptional
         if let url = URL(string: urlString) {
             // Los objetos de la clase URLSession sirven para hacer Networking entre la aplicación y una API
             let session = URLSession(configuration: .default)
             // Usamos un trailing closure para llamar a la función que se encuentra en el parámetro del handler de .dataTask
             let task = session.dataTask(with: url) {data, response, error in // La tarea de un objeto URLSession sirve para "ingresar la dirección web".
-                if error != nil {
-                    print(error!)
+                if error != nil { // Aquí el error es optional, ya que es uno de los posibles valores que se van a crear en la consulta a la API
+                    // print(error!)
+                    self.delegate?.didFailWithError(error!) // Mandamo el error al delegate para que se pueda visualizar en el VC
                     return
                 }
                 if let safeData = data {
                     // Se manda a llamar a la función de esta misma estructura que crea un objeto tipo WeatherData a partir del archivo JSON de la API (variable data)
-                    if let weatherObject = parseJSON(weatherData: safeData) {
-                        self.delegate?.receiveWeatherModel(weatherO: weatherObject)
+                    if let weatherObject = parseJSON(safeData) {
+                        self.delegate?.receiveWeatherModel(self, weatherObject)
                     }
                 }
             }
@@ -51,7 +54,7 @@ struct WeatherManager {
     // Función para crear un objeto a partir de la información del formato JSON obtenido de la API
     /// Esta función construye un objeto en lenguaje Swift a partir de información obtenida en formato JSON desde la API de OpenWeather. Primero se crea un objeto reutilizable de tipo JSONDecoder, para extraer la información que se obtuvo de la API que se encuentra en formato JSON, con el objetivo de ingresarla a un objeto en lenguaje Swift. Utilizamos una estructura do-catch para prevenir posibles errores durante la ejecución de la aplicación, en caso de que se presente cualquier tipo de error, se salta toda la parte del "do" y se va directamente al bloque de "catch". Dentro del bloque "do" de esa estructura, creamos un objeto de tipo WeatherData (la estructura creada específicamente para recibir la información de la API), usando el objeto decodificador de tipo JSONDecoder y su método .decode, que pide como parámetro el tipo de dato del que se quiere formar el objeto (le indicamos que sea de tipo WeatherData), y la variable de la cual va a tomar toda la información para crear dicho objeto. Si esto es exitoso, a partir de la siguiente línea ya tenemos un objeto de la estructura WeatherData con toda la información recibida de la API y podemos consultarla por medio de las rutas que nos indique la extensión JSON Viewer Pro de Google Chrome al momento de llamar a la API desde ese navegador, o bien, analizando cuál es la ruta que debemos de utilizar, de acuerdo a la estructura WeatherData. A partir de aquí, solamente creamos explícitamente tres variables que reciben la información necesaria para construir un objeto de tipo WeatherModel, que será utilizado directamente para el manejo de la información que vamos a mostrar en nuestra aplicación.
     /// - Parameter weatherData: Recibe una variable de tipo Data, creada durante la llamada a la API, en la función performRequest.
-    func parseJSON(weatherData: Data) -> WeatherModel? {
+    func parseJSON(_ weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
@@ -60,8 +63,8 @@ struct WeatherManager {
             let name = decodedData.name
             let weatherObject = WeatherModel(conditionId: id, cityName: name, temperature: temp)
             return weatherObject
-        } catch {
-            print(error)
+        } catch { // Si llegamos al catch, el error ya es un hecho, entonces no es necesario que sea de tipo optional
+            self.delegate?.didFailWithError(error)
             return nil
         }
     }
