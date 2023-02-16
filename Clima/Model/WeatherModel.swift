@@ -4,12 +4,14 @@ import Foundation
 
 struct WeatherModel {
     
-    // Store properties
+    /* Store properties */
     let conditionId: Int
     let cityName: String
     let temperature: Double
     
-    // Computed properties
+    /* Computed properties */
+    
+    // Identifica el tipo de clima de acuerdo al id de la API
     var conditionName: String {
         switch(conditionId) {
         case 200...232:
@@ -37,6 +39,11 @@ struct WeatherModel {
         default:
             return "sun.max.fill"
         }
+    }
+    
+    // Convierte el valor numérico de la temperatura a una cadena que pueda mandarse al textField
+    var stringTemperature: String {
+        return String(format: "%.1f", temperature)
     }
     
 }

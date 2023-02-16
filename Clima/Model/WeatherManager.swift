@@ -49,6 +49,8 @@ struct WeatherManager {
             let name = decodedData.name
             // Construimos el objeto de la estructura WeatherModel
             let weatherObject = WeatherModel(conditionId: id, cityName: name, temperature: temp)
+            print(weatherObject.conditionName)
+            print(weatherObject.stringTemperature)
             
         } catch {
             print(error)
