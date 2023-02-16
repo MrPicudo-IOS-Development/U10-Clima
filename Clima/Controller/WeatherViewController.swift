@@ -1,13 +1,13 @@
-/* ViewController.swift --> Clima. Created by Angela Yu on 01/09/2019.*/
+/* ViewController.swift --> Clima. Created by Miguel Torres on 04/02/2023 .*/
 
 import UIKit
 
 // Agregamos como súper clase secundaria, la clase UITextFieldDelegate para poder controlar el TextField.
-class WeatherViewController: UIViewController, UITextFieldDelegate {
-
+class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+    
     /* Llave para usar la API de OpenWeather: 2efea90cc5e2995e5cd1d2ab8bd09bbc */
     
-    // Creamos el objeto de la estructura weatherManager
+    // Creamos el objeto de la estructura WeatherManager, sobre este objeto vamos a definir este clase como el delegado de la estructura WeatherManager
     var weatherManager = WeatherManager()
     
     // IBOutlets de la interfaz para el text field, el símbolo SF del clima, el número de la temperatura y la ciudad
@@ -25,6 +25,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         // Definimos a nuestra clase ViewController como el "encargado" de comunicarse con el protocolo UITextFieldDelegate para manejar el UITextField.
         searchTextField.delegate = self // El delegado de la clase UITextField es la representación de todas las clases que pueden implementar el protocolo UITextFieldDelegate, aquí estamos diciendo que ese delegado es este ViewController que es de tipo UITextFieldDelegate.
+        // Prueba para modificar la imagen con un SFSymbol programaticamente
+        conditionImageView.image = UIImage(systemName: "sun.max.circle")
+        // Asignamos el delegate de WeatherManager a la clase WeatherViewController
+        weatherManager.delegate = self
     }
 
     // Función que controla el botón de búsqueda de la aplicación.
@@ -65,6 +69,12 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
             }
             return false
         }
+    }
+    
+    // Función para implementar el delegate design pattern en nuestra aplicación
+    func receiveWeatherModel(weatherO: WeatherModel) {
+        print("Hola!! ", weatherO.conditionName)
+        // conditionImageView.image = UIImage(systemName: weatherO.conditionName)
     }
     
 }
