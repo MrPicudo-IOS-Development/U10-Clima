@@ -73,10 +73,15 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         }
     }
     
-    // Función para implementar el delegate design pattern en nuestra aplicación
+    /// Implementa el design delegate pattern creado en WeatherManager. Esta función recibe toda la información del objeto swift que se construyó con la API de Open Weather y manda sus datos a la interfaz, pero como es llamada desde el Completion Handler, depende al 100% de que éste termine para poder utilizar los datos.
     func receiveWeatherModel(_ weatherManager: WeatherManager, _ weatherO: WeatherModel) {
         print("Hola!! ", weatherO.conditionName)
-        // conditionImageView.image = UIImage(systemName: weatherO.conditionName)
+        // Usamos un DispatchQueue para poder mandar la información del objeto a la Interfaz de Usuario
+        DispatchQueue.main.async {
+            self.conditionImageView.image = UIImage(systemName: weatherO.conditionName)
+            self.temperatureLabel.text = weatherO.stringTemperature
+            self.cityLabel.text = weatherO.cityName
+        }
     }
     
     // Función para imprimir el posible error en la consola al momento de probar la aplicación

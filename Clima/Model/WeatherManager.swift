@@ -28,6 +28,7 @@ struct WeatherManager {
     
     
     // Usamos parámetros internos y externos para hacer más claro el código de esta función.
+    /// Hace la conexión a la API por medio de un Completion Handler, el cual a su vez llama al método parseJSON para crear el objeto en lenguaje Swift con los datos que nos importan, y los manda a la clase que tome el delegate del protocolo WeatherManagerDelegate
     func performRequest(with urlString: String) {
         // Se crea un objeto que almacena la ubicación de un recurso (local o externo), en forma de un safeOptional
         if let url = URL(string: urlString) {
