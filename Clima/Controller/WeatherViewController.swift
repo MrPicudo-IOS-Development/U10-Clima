@@ -3,8 +3,8 @@
 import UIKit
 
 // Agregamos como súper clase secundaria, la clase UITextFieldDelegate para poder controlar el TextField.
-/// Controla la vista principal, implementa protocolos de UITextFieldDelegate y WeatherManagerDelegate
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+/// Controla la vista principal.
+class WeatherViewController: UIViewController {
     
     /* Llave para usar la API de OpenWeather: 2efea90cc5e2995e5cd1d2ab8bd09bbc */
     
@@ -27,12 +27,18 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         super.viewDidLoad()
         // Definimos a nuestra clase ViewController como el "encargado" de comunicarse con el protocolo UITextFieldDelegate para manejar el UITextField.
         searchTextField.delegate = self // El delegado de la clase UITextField es la representación de todas las clases que pueden implementar el protocolo UITextFieldDelegate, aquí estamos diciendo que ese delegado es este ViewController que es de tipo UITextFieldDelegate.
-        // Prueba para modificar la imagen con un SFSymbol programaticamente
-        conditionImageView.image = UIImage(systemName: "sun.max.circle")
         // Asignamos el delegate de WeatherManager a la clase WeatherViewController
         weatherManager.delegate = self
     }
+    
+}
 
+
+ // MARK: - UITextFieldDelegate
+
+// Bloque de código relacionado a la implementación del protocolo UITextFieldDelegate
+extension WeatherViewController: UITextFieldDelegate {
+    
     // Función que controla el botón de búsqueda de la aplicación.
     @IBAction func searchButton(_ sender: UIButton) {
         print(searchTextField.text!)
@@ -73,9 +79,16 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         }
     }
     
+}
+
+
+// MARK: - WeatherManagerDelegate
+
+// Bloque de código relacionado a la implementación del protocolo WeatherManagerDelegate
+extension WeatherViewController: WeatherManagerDelegate {
+    
     /// Implementa el design delegate pattern creado en WeatherManager. Esta función recibe toda la información del objeto swift que se construyó con la API de Open Weather y manda sus datos a la interfaz, pero como es llamada desde el Completion Handler, depende al 100% de que éste termine para poder utilizar los datos.
     func receiveWeatherModel(_ weatherManager: WeatherManager, _ weatherO: WeatherModel) {
-        print("Hola!! ", weatherO.conditionName)
         // Usamos un DispatchQueue para poder mandar la información del objeto a la Interfaz de Usuario
         DispatchQueue.main.async {
             self.conditionImageView.image = UIImage(systemName: weatherO.conditionName)
@@ -91,3 +104,11 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     
 }
 
+
+
+/* Notas de prueba:
+ 
+ // Prueba para modificar la imagen con un SFSymbol programaticamente
+ conditionImageView.image = UIImage(systemName: "sun.max.circle")
+ 
+ */
