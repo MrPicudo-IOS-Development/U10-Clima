@@ -1,6 +1,7 @@
 /* weatherManager.swift --> Clima. Created by Miguel Torres on 09/02/23. */
 
 import Foundation
+import CoreLocation
 
 /* Protocolo para el WeatherManager. Este protocolo puede escribirse en cualquiera de los archivos .swift de la aplicación, siempre que esté fuera de cualquier clase o estructura. Pero por convención siempre se debe crear en el archivo de la clase o estructura que lleva su mismo nombre inicial. */
 protocol WeatherManagerDelegate {
@@ -24,6 +25,12 @@ struct WeatherManager {
         let urlString = "\(weatherURL)&q=\(cityName)"
         // Ahora, nuestra variable llamada urlString contiene toda la información necesaria para hacer una llamada a la API.
         performRequest(with: urlString) // Equivalente a self.performRequest(urlString) - - - with es el parámetro externo.
+    }
+    
+    // Hace una URL alternativa con los datos de latitude y longitude
+    func fetchWeather(_ latitude: CLLocationDegrees, _ longitude: CLLocationDegrees) {
+        let urlString = "\(weatherURL)&lat=\(latitude)&lon=\(longitude)"
+        performRequest(with: urlString)
     }
     
     
@@ -70,10 +77,7 @@ struct WeatherManager {
         }
     }
     
-    
 }
-
-
 
 
 /* Código de referencia para entender cómo se implementó el closure en el paso 3
